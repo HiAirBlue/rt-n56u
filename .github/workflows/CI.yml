@@ -18,6 +18,7 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-20.04
+    permissions: write-all
     if: ${{ !(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) }}
     env:
       build_variant: ${{ matrix.build_variant }}
@@ -49,7 +50,8 @@ jobs:
         run: |
           cd trunk
           mkdir -p ${images_dir}
-          for m in $targets; do fakeroot ./build_firmware_ci $m; \
+#          for m in $targets; do fakeroot ./build_firmware_ci $m; \
+          for m in $targets; do fakeroot ./build_firmware_modify $m; \
           if [ $? = 0 ]; then cp -f images/*.trx ${images_dir}/$m.trx; else exit 1; fi; \
           ./clear_tree_simple >/dev/null 2>&1; done
       - name: Create archive
